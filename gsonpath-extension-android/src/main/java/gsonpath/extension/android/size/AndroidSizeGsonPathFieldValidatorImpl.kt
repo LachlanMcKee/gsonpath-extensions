@@ -12,6 +12,9 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.ArrayType
 
+/**
+ * A {@link GsonPathExtension} that supports the '@Size' Android Support Library annotation.
+ */
 open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
 
     override fun getExtensionName(): String {
@@ -19,7 +22,7 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
     }
 
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                       variableName: String): CodeBlock? {
+                                          variableName: String): CodeBlock? {
 
         val element = fieldInfo.element ?: return null
 
@@ -52,6 +55,13 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
         return null
     }
 
+    /**
+     * Adds the size 'min value' validation if the minValue does not equal the floor-value.
+     *
+     * @param sizeAnnotation the annotation to obtain the size values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleMin(sizeAnnotation: AnnotationMirror, fieldName: String,
                                             variableName: String, fieldType: FieldType): CodeBlock.Builder {
 
@@ -70,6 +80,13 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
                 .endControlFlow()
     }
 
+    /**
+     * Adds the size 'max value' validation if the maxValue does not equal the ceiling-value.
+     *
+     * @param sizeAnnotation the annotation to obtain the size values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleMax(sizeAnnotation: AnnotationMirror, fieldName: String, variableName: String,
                                             fieldType: FieldType): CodeBlock.Builder {
 
@@ -88,6 +105,15 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
                 .endControlFlow()
     }
 
+    /**
+     * Adds the size 'multiple' validation if the multipleValue does not equal 1.
+     *
+     * 'Multiple' means that the array/collection must have a size that is a multiple of this value.
+     *
+     * @param sizeAnnotation the annotation to obtain the size values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleMultiple(sizeAnnotation: AnnotationMirror, fieldName: String,
                                                  variableName: String, fieldType: FieldType): CodeBlock.Builder {
 
@@ -106,6 +132,15 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
                 .endControlFlow()
     }
 
+    /**
+     * Adds the size 'exact length' validation if the exactLengthValue does not equal -1.
+     *
+     * 'Exact length' means that the array/collection must have a size that matches this value.
+     *
+     * @param sizeAnnotation the annotation to obtain the size values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleExactLength(sizeAnnotation: AnnotationMirror, fieldName: String,
                                                     variableName: String, fieldType: FieldType): CodeBlock.Builder {
 
@@ -125,6 +160,9 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
                 .endControlFlow()
     }
 
+    /**
+     * Adds an exception that prepends an error message that is common across all of the 'Size' validations.
+     */
     private fun CodeBlock.Builder.addSizeException(fieldType: FieldType, fieldName: String,
                                                    exceptionText: String): CodeBlock.Builder {
 
@@ -132,7 +170,14 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
                 exceptionText)
     }
 
+    /**
+     * Defines the type of field being used.
+     *
+     * The 'Size' annotation supports arrays and collections, and the generated code syntax must change depending
+     * on which type is used.
+     */
     enum class FieldType(val label: String, val lengthProperty: String) {
-        ARRAY("array", "length"), COLLECTION("collection", "size()");
+        ARRAY("array", "length"),
+        COLLECTION("collection", "size()");
     }
 }

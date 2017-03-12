@@ -12,6 +12,9 @@ import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
+/**
+ * A {@link GsonPathExtension} that supports the '@IntDef' Android Support Library annotation.
+ */
 open class AndroidIntDefGsonPathFieldValidatorImpl : GsonPathExtension {
 
     override fun getExtensionName(): String {
@@ -19,7 +22,7 @@ open class AndroidIntDefGsonPathFieldValidatorImpl : GsonPathExtension {
     }
 
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                       variableName: String): CodeBlock? {
+                                          variableName: String): CodeBlock? {
 
         val element = fieldInfo.element ?: return null
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(element,
@@ -28,9 +31,11 @@ open class AndroidIntDefGsonPathFieldValidatorImpl : GsonPathExtension {
         val validationBuilder = CodeBlock.builder()
         validationBuilder.beginControlFlow("switch ($variableName)")
 
+        // The integer constants within the 'IntDef#values' property.
         val intDefValues: List<*> = getAnnotationValueObject(defAnnotationMirrors.defAnnotationMirror, "value")
                 as List<*>? ?: return null
 
+        // Create a 'case' for each valid integer.
         intDefValues.forEach { it ->
             validationBuilder.addWithNewLine("""case ${(it as AnnotationValue).value}:""")
         }
@@ -39,6 +44,8 @@ open class AndroidIntDefGsonPathFieldValidatorImpl : GsonPathExtension {
                 .addStatement("break")
                 .unindent()
                 .addNewLine()
+
+                // Create a 'default' that throws an exception if an unexpected integer is found.
                 .addWithNewLine("default:")
                 .indent()
                 .addException("""Unexpected Int '" + $variableName + "' for field '${fieldInfo.fieldName}'""")

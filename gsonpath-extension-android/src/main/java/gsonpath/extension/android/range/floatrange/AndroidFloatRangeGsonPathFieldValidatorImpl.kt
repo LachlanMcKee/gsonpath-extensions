@@ -11,6 +11,9 @@ import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 
+/**
+ * A {@link GsonPathExtension} that supports the '@FloatRange' Android Support Library annotation.
+ */
 open class AndroidFloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     private val BOXED_FLOAT = ClassName.get("java.lang", "Float")
     private val BOXED_DOUBLE = ClassName.get("java.lang", "Double")
@@ -20,7 +23,7 @@ open class AndroidFloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     }
 
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                       variableName: String): CodeBlock? {
+                                          variableName: String): CodeBlock? {
 
         val element = fieldInfo.element ?: return null
 
@@ -52,6 +55,13 @@ open class AndroidFloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
         return null
     }
 
+    /**
+     * Adds the range 'from' validation if the fromValue does not equal the floor-value.
+     *
+     * @param floatRangeAnnotationMirror the annotation to obtain the range values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleFrom(floatRangeAnnotationMirror: AnnotationMirror, fieldName: String,
                                              variableName: String): CodeBlock.Builder {
 
@@ -65,6 +75,13 @@ open class AndroidFloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
         return handleRangeValue(fromValue.toString(), true, fromInclusive, fieldName, variableName)
     }
 
+    /**
+     * Adds the range 'to' validation if the toValue does not equal the ceiling-value.
+     *
+     * @param floatRangeAnnotationMirror the annotation to obtain the range values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleTo(floatRangeAnnotationMirror: AnnotationMirror, fieldName: String,
                                            variableName: String): CodeBlock.Builder {
 

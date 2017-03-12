@@ -11,6 +11,9 @@ import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 
+/**
+ * A {@link GsonPathExtension} that supports the '@IntRange' Android Support Library annotation.
+ */
 open class AndroidIntRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     private val BOXED_INT = ClassName.get("java.lang", "Integer")
     private val BOXED_LONG = ClassName.get("java.lang", "Long")
@@ -20,7 +23,7 @@ open class AndroidIntRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     }
 
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                       variableName: String): CodeBlock? {
+                                          variableName: String): CodeBlock? {
 
         val element = fieldInfo.element ?: return null
 
@@ -52,6 +55,13 @@ open class AndroidIntRangeGsonPathFieldValidatorImpl : GsonPathExtension {
         return null
     }
 
+    /**
+     * Adds the range 'from' validation if the fromValue does not equal the floor-value.
+     *
+     * @param intRangeAnnotationMirror the annotation to obtain the range values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleFrom(intRangeAnnotationMirror: AnnotationMirror, fieldName: String,
                                              variableName: String): CodeBlock.Builder {
 
@@ -64,6 +74,13 @@ open class AndroidIntRangeGsonPathFieldValidatorImpl : GsonPathExtension {
         return handleRangeValue(fromValue.toString(), true, true, fieldName, variableName)
     }
 
+    /**
+     * Adds the range 'to' validation if the toValue does not equal the ceiling-value.
+     *
+     * @param intRangeAnnotationMirror the annotation to obtain the range values
+     * @param fieldName the name of the field being validated
+     * @param variableName the name of the variable that is assigned back to the fieldName
+     */
     private fun CodeBlock.Builder.handleTo(intRangeAnnotationMirror: AnnotationMirror, fieldName: String,
                                            variableName: String): CodeBlock.Builder {
 
