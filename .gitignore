@@ -1,0 +1,18 @@
+# Compiled Folders
+build/
+classes/
+.gradle/
+
+# IntelliJ Files
+.idea/
+*.iml
+
+# Android Folders/Files
+build.xml
+local.properties
+signing.properties
+*.keystore
+.gradle/
+
+# Vim Temp files
+*~
