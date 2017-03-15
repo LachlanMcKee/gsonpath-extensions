@@ -1,12 +1,12 @@
-package gsonpath.extension;
+package gsonpath.extension.def.intdef;
 
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static gsonpath.extension.IntDefExample.VALUE_1;
-import static gsonpath.extension.IntDefExample.VALUE_2;
+import static gsonpath.extension.def.intdef.IntDefExample.VALUE_1;
+import static gsonpath.extension.def.intdef.IntDefExample.VALUE_2;
 
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({VALUE_1, VALUE_2})
