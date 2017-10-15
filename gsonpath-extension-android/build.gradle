@@ -4,7 +4,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.lachlanmckee'
-version = '1.0.0'
+version = '1.1.0'
 
 targetCompatibility = JavaVersion.VERSION_1_7
 sourceCompatibility = JavaVersion.VERSION_1_7
@@ -23,7 +23,7 @@ buildscript {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.5"
 
-    compile 'net.lachlanmckee:gsonpath-compiler-base:1.0.0'
+    compile 'net.lachlanmckee:gsonpath-compiler-base:1.1.0'
 
     compile 'com.google.auto.service:auto-service:1.0-rc2'
     compile 'com.google.auto:auto-common:0.6'
