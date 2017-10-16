@@ -25,9 +25,7 @@ open class AndroidIntRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
                                           variableName: String): CodeBlock? {
 
-        val element = fieldInfo.element ?: return null
-
-        val intRangeAnnotation: AnnotationMirror = getAnnotationMirror(element,
+        val intRangeAnnotation: AnnotationMirror = getAnnotationMirror(fieldInfo.element,
                 "android.support.annotation", "IntRange") ?: return null
 
         // Ensure that the field is either a integer, or a long.

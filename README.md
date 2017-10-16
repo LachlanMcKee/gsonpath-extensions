@@ -167,5 +167,5 @@ if (value_value != null) {
 This library is available on Maven, you can add it to your project using the following gradle dependencies:
 
 ```gradle
-apt 'net.lachlanmckee:gsonpath-extension-android:1.0.0'
+apt 'net.lachlanmckee:gsonpath-extension-android:1.1.0'
 ```

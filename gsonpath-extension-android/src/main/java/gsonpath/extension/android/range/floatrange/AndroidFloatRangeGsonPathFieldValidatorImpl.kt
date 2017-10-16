@@ -25,9 +25,7 @@ open class AndroidFloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
                                           variableName: String): CodeBlock? {
 
-        val element = fieldInfo.element ?: return null
-
-        val floatRangeAnnotation: AnnotationMirror = getAnnotationMirror(element,
+        val floatRangeAnnotation: AnnotationMirror = getAnnotationMirror(fieldInfo.element,
                 "android.support.annotation", "FloatRange") ?: return null
 
         // Ensure that the field is either a float, or a double.
