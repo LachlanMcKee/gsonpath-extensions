@@ -4,8 +4,19 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.5"
+}
+
 allprojects {
     repositories {
         jcenter()
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "Gsonpath extensions Android"
+        property "sonar.projectKey", "gsonpath-extension-android"
     }
 }
