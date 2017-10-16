@@ -37,8 +37,7 @@ open class AndroidStringDefGsonPathFieldValidatorImpl : GsonPathExtension {
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
                                           variableName: String): CodeBlock? {
 
-        val element = fieldInfo.element ?: return null
-        val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(element,
+        val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
                 "android.support.annotation", "StringDef") ?: return null
 
         // The annotation values reference which contains the String constants.

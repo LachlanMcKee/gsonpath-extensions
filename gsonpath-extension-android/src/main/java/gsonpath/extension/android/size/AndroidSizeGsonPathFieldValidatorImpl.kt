@@ -24,9 +24,7 @@ open class AndroidSizeGsonPathFieldValidatorImpl : GsonPathExtension {
     override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
                                           variableName: String): CodeBlock? {
 
-        val element = fieldInfo.element ?: return null
-
-        val sizeAnnotation: AnnotationMirror = getAnnotationMirror(element,
+        val sizeAnnotation: AnnotationMirror = getAnnotationMirror(fieldInfo.element,
                 "android.support.annotation", "Size") ?: return null
 
         // Ensure that the field is either an array or a collection.

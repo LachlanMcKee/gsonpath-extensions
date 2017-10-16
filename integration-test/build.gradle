@@ -19,8 +19,8 @@ apply plugin: "net.ltgt.apt"
 dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
 
-    compile 'net.lachlanmckee:gsonpath:2.2.0'
-    apt 'net.lachlanmckee:gsonpath-compiler:2.2.0'
+    compile 'net.lachlanmckee:gsonpath:2.3.0'
+    apt 'net.lachlanmckee:gsonpath-compiler:2.3.0'
     apt project(":gsonpath-extension-android")
 
     testCompile 'junit:junit:4.12'
