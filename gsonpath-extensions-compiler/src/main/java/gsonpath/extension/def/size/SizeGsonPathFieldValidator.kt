@@ -15,7 +15,7 @@ import javax.lang.model.type.ArrayType
 /**
  * A {@link GsonPathExtension} that supports the '@Size' annotation.
  */
-open class SizeGsonPathFieldValidatorImpl : GsonPathExtension {
+class SizeGsonPathFieldValidator : GsonPathExtension {
 
     override fun getExtensionName(): String {
         return "'Size' Annotation"

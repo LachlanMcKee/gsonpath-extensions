@@ -1,0 +1,5 @@
+gsonpath.extension.def.range.floatrange.FloatRangeGsonPathFieldValidator
+gsonpath.extension.def.range.intrange.IntRangeGsonPathFieldValidator
+gsonpath.extension.def.size.SizeGsonPathFieldValidator
+gsonpath.extension.def.intdef.IntDefGsonPathFieldValidator
+gsonpath.extension.def.stringdef.StringDefGsonPathFieldValidator

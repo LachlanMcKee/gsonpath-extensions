@@ -14,7 +14,7 @@ import javax.lang.model.element.AnnotationMirror
 /**
  * A {@link GsonPathExtension} that supports the '@FloatRange' annotation.
  */
-open class FloatRangeGsonPathFieldValidatorImpl : GsonPathExtension {
+class FloatRangeGsonPathFieldValidator : GsonPathExtension {
     private val BOXED_FLOAT = ClassName.get("java.lang", "Float")
     private val BOXED_DOUBLE = ClassName.get("java.lang", "Double")
 

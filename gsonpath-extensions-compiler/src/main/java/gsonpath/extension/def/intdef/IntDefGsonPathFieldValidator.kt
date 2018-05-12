@@ -15,7 +15,7 @@ import javax.lang.model.element.AnnotationValue
 /**
  * A {@link GsonPathExtension} that supports the '@IntDef' annotation.
  */
-open class IntDefGsonPathFieldValidatorImpl : GsonPathExtension {
+class IntDefGsonPathFieldValidator : GsonPathExtension {
 
     override fun getExtensionName(): String {
         return "'Int Def' Annotation"
