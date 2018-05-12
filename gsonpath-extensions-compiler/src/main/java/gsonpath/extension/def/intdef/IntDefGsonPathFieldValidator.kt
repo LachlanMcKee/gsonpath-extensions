@@ -25,14 +25,14 @@ class IntDefGsonPathFieldValidator : GsonPathExtension {
                                           variableName: String): CodeBlock? {
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
-                "android.support.annotation", "IntDef") ?: return null
+            "android.support.annotation", "IntDef") ?: return null
 
         val validationBuilder = CodeBlock.builder()
         validationBuilder.beginControlFlow("switch ($variableName)")
 
         // The integer constants within the 'IntDef#values' property.
         val intDefValues: List<*> = getAnnotationValueObject(defAnnotationMirrors.defAnnotationMirror, "value")
-                as List<*>? ?: return null
+            as List<*>? ?: return null
 
         // Create a 'case' for each valid integer.
         intDefValues.forEach { it ->
@@ -40,15 +40,15 @@ class IntDefGsonPathFieldValidator : GsonPathExtension {
         }
 
         validationBuilder.indent()
-                .addStatement("break")
-                .unindent()
-                .addNewLine()
+            .addStatement("break")
+            .unindent()
+            .addNewLine()
 
-                // Create a 'default' that throws an exception if an unexpected integer is found.
-                .addWithNewLine("default:")
-                .indent()
-                .addException("""Unexpected Int '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
-                .unindent()
+            // Create a 'default' that throws an exception if an unexpected integer is found.
+            .addWithNewLine("default:")
+            .indent()
+            .addException("""Unexpected Int '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
+            .unindent()
 
         validationBuilder.endControlFlow()
 

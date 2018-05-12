@@ -22,7 +22,7 @@ public class IntRangeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {IntRangeModel.IntModel.class}, {IntRangeModel.LongModel.class}
+                {IntRangeModel.IntModel.class}, {IntRangeModel.LongModel.class}
             });
         }
 
@@ -51,13 +51,13 @@ public class IntRangeTests {
         @Test
         public void givenBelowMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:-1}",
-                    "Invalid 'from' range for value. Expected: '>= 0', Found '-1'");
+                "Invalid 'from' range for value. Expected: '>= 0', Found '-1'");
         }
 
         @Test
         public void givenAboveMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:6}",
-                    "Invalid 'to' range for value. Expected: '<= 5', Found '6'");
+                "Invalid 'to' range for value. Expected: '<= 5', Found '6'");
         }
 
         private void assertValue(IntRangeModel.BaseModel model, int intValue, long longValue) {

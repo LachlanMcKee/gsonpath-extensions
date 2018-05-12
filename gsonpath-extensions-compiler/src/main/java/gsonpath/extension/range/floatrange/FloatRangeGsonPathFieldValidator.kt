@@ -32,21 +32,21 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
 
         // Ensure that the field is either a float, or a double.
         val typeName =
-                if (fieldInfo.typeName.isPrimitive) {
-                    fieldInfo.typeName.box()
-                } else {
-                    fieldInfo.typeName
-                }
+            if (fieldInfo.typeName.isPrimitive) {
+                fieldInfo.typeName.box()
+            } else {
+                fieldInfo.typeName
+            }
 
         if (typeName != BOXED_DOUBLE && typeName != BOXED_FLOAT) {
             throw ProcessingException("Unexpected type found for field annotated with 'FloatRange', only " +
-                    "floats and doubles are allowed.", fieldInfo.element)
+                "floats and doubles are allowed.", fieldInfo.element)
         }
 
         val fieldName = fieldInfo.fieldName
         val validationBuilder = CodeBlock.builder()
-                .handleFrom(floatRangeAnnotation, fieldName, variableName)
-                .handleTo(floatRangeAnnotation, fieldName, variableName)
+            .handleFrom(floatRangeAnnotation, fieldName, variableName)
+            .handleTo(floatRangeAnnotation, fieldName, variableName)
 
         val validationCodeBlock = validationBuilder.build()
         if (!validationCodeBlock.isEmpty) {
@@ -66,7 +66,8 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
                                              variableName: String): CodeBlock.Builder {
 
         val fromValue: Double = getAnnotationValueObject(floatRangeAnnotationMirror, "from") as Double? ?: return this
-        val fromInclusive: Boolean = getAnnotationValueObject(floatRangeAnnotationMirror, "fromInclusive") as Boolean? ?: true
+        val fromInclusive: Boolean = getAnnotationValueObject(floatRangeAnnotationMirror, "fromInclusive") as Boolean?
+            ?: true
 
         if (fromValue == Double.NEGATIVE_INFINITY) {
             return this
@@ -86,7 +87,8 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
                                            variableName: String): CodeBlock.Builder {
 
         val toValue: Double = getAnnotationValueObject(floatRangeAnnotationMirror, "to") as Double? ?: return this
-        val toInclusive: Boolean = getAnnotationValueObject(floatRangeAnnotationMirror, "toInclusive") as Boolean? ?: true
+        val toInclusive: Boolean = getAnnotationValueObject(floatRangeAnnotationMirror, "toInclusive") as Boolean?
+            ?: true
 
         if (toValue == java.lang.Double.POSITIVE_INFINITY) {
             return this

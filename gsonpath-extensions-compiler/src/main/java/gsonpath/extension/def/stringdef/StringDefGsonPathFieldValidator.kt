@@ -38,7 +38,7 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
                                           variableName: String): CodeBlock? {
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
-                "android.support.annotation", "StringDef") ?: return null
+            "android.support.annotation", "StringDef") ?: return null
 
         // The annotation values reference which contains the String constants.
         val defAnnotationValues: AnnotationValue = getAnnotationValue(defAnnotationMirrors.defAnnotationMirror,
@@ -52,8 +52,8 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         val annotationElement = defAnnotationMirrors.annotationMirror.annotationType.asElement()
         val treesInstance = Trees.instance(processingEnv)
         val stringDefConstants: List<String>? = AnnotationValueConstantsVisitor().scan(
-                treesInstance.getPath(annotationElement, defAnnotationMirrors.defAnnotationMirror, defAnnotationValues),
-                null)
+            treesInstance.getPath(annotationElement, defAnnotationMirrors.defAnnotationMirror, defAnnotationValues),
+            null)
 
         // If there are no String constants in the 'StringDef' abort.
         if (stringDefConstants == null || stringDefConstants.isEmpty()) {
@@ -66,31 +66,31 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         stringDefConstants.forEach { it ->
 
             val constant =
-                    if (!it.contains(".")) {
-                        // Append the enclosing class name
-                        "$annotationElement.$it"
-                    } else {
-                        it
-                    }
+                if (!it.contains(".")) {
+                    // Append the enclosing class name
+                    "$annotationElement.$it"
+                } else {
+                    it
+                }
 
             validationBuilder.addWithNewLine("""case $constant:""")
-                    .indent()
+                .indent()
 
-                    //
-                    // The StringDef annotation requires the String constant to be referenced, therefore we must
-                    // reassign the String value to the constant.
-                    //
-                    .addStatement("$variableName = $constant")
-                    .addStatement("break")
-                    .unindent()
-                    .addNewLine()
+                //
+                // The StringDef annotation requires the String constant to be referenced, therefore we must
+                // reassign the String value to the constant.
+                //
+                .addStatement("$variableName = $constant")
+                .addStatement("break")
+                .unindent()
+                .addNewLine()
         }
 
         // Throw an exception if an unexpected String is found.
         validationBuilder.addWithNewLine("default:")
-                .indent()
-                .addException("""Unexpected String '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
-                .unindent()
+            .indent()
+            .addException("""Unexpected String '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
+            .unindent()
 
         validationBuilder.endControlFlow()
 
