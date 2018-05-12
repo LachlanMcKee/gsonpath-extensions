@@ -1,4 +1,9 @@
 buildscript {
+    ext.kotlin_version = '1.2.31'
+    ext.gson_version = '2.8.1'
+    ext.gsonpath_version = '2.3.2'
+    ext.junit_version = '4.12'
+
     repositories {
         jcenter()
     }
@@ -16,7 +21,7 @@ allprojects {
 
 sonarqube {
     properties {
-        property "sonar.projectName", "Gsonpath extensions Android"
-        property "sonar.projectKey", "gsonpath-extension-android"
+        property "sonar.projectName", "Gsonpath extensions"
+        property "sonar.projectKey", "gsonpath-extensions"
     }
 }

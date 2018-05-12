@@ -1,1 +1,1 @@
-include 'gsonpath-extension-android', 'integration-test'
+include 'gsonpath-extensions-compiler', 'gsonpath-extensions', 'integration-test'
