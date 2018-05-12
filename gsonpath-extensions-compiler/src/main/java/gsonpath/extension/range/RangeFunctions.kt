@@ -1,7 +1,7 @@
-package gsonpath.extension.def.range
+package gsonpath.extension.range
 
 import com.squareup.javapoet.CodeBlock
-import gsonpath.extension.def.addException
+import gsonpath.extension.addException
 
 /**
  * Creates the 'range' code validation code block.
@@ -19,23 +19,23 @@ fun CodeBlock.Builder.handleRangeValue(value: String,
                                        variableName: String): CodeBlock.Builder {
 
     val comparisonOperator: String =
-            if (isFrom) {
-                if (isInclusive) "<" else "<="
-            } else {
-                if (isInclusive) ">" else ">="
-            }
+        if (isFrom) {
+            if (isInclusive) "<" else "<="
+        } else {
+            if (isInclusive) ">" else ">="
+        }
 
     val expectedOperator: String =
-            if (isFrom) {
-                if (isInclusive) ">=" else ">"
-            } else {
-                if (isInclusive) "<=" else "<"
-            }
+        if (isFrom) {
+            if (isInclusive) ">=" else ">"
+        } else {
+            if (isInclusive) "<=" else "<"
+        }
 
     val label: String = if (isFrom) "from" else "to"
 
     return this.beginControlFlow("if ($variableName $comparisonOperator $value)")
-            .addException("Invalid '$label' range for $fieldName. Expected: '$expectedOperator $value', " +
-                    """Found '" + $variableName + "'""")
-            .endControlFlow()
+        .addException("Invalid '$label' range for $fieldName. Expected: '$expectedOperator $value', " +
+            """Found '" + $variableName + "'""")
+        .endControlFlow()
 }

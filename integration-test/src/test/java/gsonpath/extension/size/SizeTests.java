@@ -22,8 +22,8 @@ public class SizeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {SizeModel.MinAndMax.ArrayModel.class},
-                    {SizeModel.MinAndMax.CollectionModel.class}
+                {SizeModel.MinAndMax.ArrayModel.class},
+                {SizeModel.MinAndMax.CollectionModel.class}
             });
         }
 
@@ -75,8 +75,8 @@ public class SizeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {SizeModel.Multiple.ArrayModel.class},
-                    {SizeModel.Multiple.CollectionModel.class}
+                {SizeModel.Multiple.ArrayModel.class},
+                {SizeModel.Multiple.CollectionModel.class}
             });
         }
 
@@ -122,8 +122,8 @@ public class SizeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {SizeModel.ExactSize.ArrayModel.class},
-                    {SizeModel.ExactSize.CollectionModel.class}
+                {SizeModel.ExactSize.ArrayModel.class},
+                {SizeModel.ExactSize.CollectionModel.class}
             });
         }
 

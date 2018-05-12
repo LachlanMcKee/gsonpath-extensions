@@ -22,7 +22,7 @@ public class FloatRangeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {FloatRangeModel.Inclusive.FloatModel.class}, {FloatRangeModel.Inclusive.DoubleModel.class}
+                {FloatRangeModel.Inclusive.FloatModel.class}, {FloatRangeModel.Inclusive.DoubleModel.class}
             });
         }
 
@@ -51,13 +51,13 @@ public class FloatRangeTests {
         @Test
         public void givenBelowMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:-0.1}",
-                    "Invalid 'from' range for value. Expected: '>= 0.0', Found '-0.1'");
+                "Invalid 'from' range for value. Expected: '>= 0.0', Found '-0.1'");
         }
 
         @Test
         public void givenAboveMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.1}",
-                    "Invalid 'to' range for value. Expected: '<= 5.0', Found '5.1'");
+                "Invalid 'to' range for value. Expected: '<= 5.0', Found '5.1'");
         }
     }
 
@@ -68,7 +68,7 @@ public class FloatRangeTests {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {FloatRangeModel.Exclusive.FloatModel.class}, {FloatRangeModel.Exclusive.DoubleModel.class}
+                {FloatRangeModel.Exclusive.FloatModel.class}, {FloatRangeModel.Exclusive.DoubleModel.class}
             });
         }
 
@@ -97,25 +97,25 @@ public class FloatRangeTests {
         @Test
         public void givenMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:0.0}",
-                    "Invalid 'from' range for value. Expected: '> 0.0', Found '0.0'");
+                "Invalid 'from' range for value. Expected: '> 0.0', Found '0.0'");
         }
 
         @Test
         public void givenMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.0}",
-                    "Invalid 'to' range for value. Expected: '< 5.0', Found '5.0'");
+                "Invalid 'to' range for value. Expected: '< 5.0', Found '5.0'");
         }
 
         @Test
         public void givenBelowMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:-0.1}",
-                    "Invalid 'from' range for value. Expected: '> 0.0', Found '-0.1'");
+                "Invalid 'from' range for value. Expected: '> 0.0', Found '-0.1'");
         }
 
         @Test
         public void givenAboveMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.1}",
-                    "Invalid 'to' range for value. Expected: '< 5.0', Found '5.1'");
+                "Invalid 'to' range for value. Expected: '< 5.0', Found '5.1'");
         }
     }
 

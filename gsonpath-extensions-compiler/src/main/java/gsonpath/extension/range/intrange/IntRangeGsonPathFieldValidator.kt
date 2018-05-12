@@ -1,12 +1,12 @@
-package gsonpath.extension.def.range.intrange
+package gsonpath.extension.range.intrange
 
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.extension.def.getAnnotationMirror
-import gsonpath.extension.def.getAnnotationValueObject
-import gsonpath.extension.def.range.handleRangeValue
+import gsonpath.extension.getAnnotationMirror
+import gsonpath.extension.getAnnotationValueObject
+import gsonpath.extension.range.handleRangeValue
 import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
@@ -32,21 +32,21 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
 
         // Ensure that the field is either a integer, or a long.
         val typeName =
-                if (fieldInfo.typeName.isPrimitive) {
-                    fieldInfo.typeName.box()
-                } else {
-                    fieldInfo.typeName
-                }
+            if (fieldInfo.typeName.isPrimitive) {
+                fieldInfo.typeName.box()
+            } else {
+                fieldInfo.typeName
+            }
 
         if (typeName != BOXED_INT && typeName != BOXED_LONG) {
             throw ProcessingException("Unexpected type found for field annotated with 'IntRange', only " +
-                    "integers and longs are allowed.", fieldInfo.element)
+                "integers and longs are allowed.", fieldInfo.element)
         }
 
         val fieldName = fieldInfo.fieldName
         val validationBuilder = CodeBlock.builder()
-                .handleFrom(intRangeAnnotation, fieldName, variableName)
-                .handleTo(intRangeAnnotation, fieldName, variableName)
+            .handleFrom(intRangeAnnotation, fieldName, variableName)
+            .handleTo(intRangeAnnotation, fieldName, variableName)
 
         val validationCodeBlock = validationBuilder.build()
         if (!validationCodeBlock.isEmpty) {
