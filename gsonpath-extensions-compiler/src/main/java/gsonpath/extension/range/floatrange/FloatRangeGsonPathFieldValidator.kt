@@ -1,12 +1,12 @@
-package gsonpath.extension.def.range.floatrange
+package gsonpath.extension.range.floatrange
 
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.extension.def.getAnnotationMirror
-import gsonpath.extension.def.getAnnotationValueObject
-import gsonpath.extension.def.range.handleRangeValue
+import gsonpath.extension.getAnnotationMirror
+import gsonpath.extension.getAnnotationValueObject
+import gsonpath.extension.range.handleRangeValue
 import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror

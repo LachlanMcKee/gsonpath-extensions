@@ -1,5 +1,6 @@
 package gsonpath.extension.def
 
+import gsonpath.extension.getAnnotationMirror
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
 

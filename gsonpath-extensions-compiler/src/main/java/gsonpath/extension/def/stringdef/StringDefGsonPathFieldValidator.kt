@@ -11,10 +11,10 @@ import com.sun.tools.javac.tree.JCTree
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.compiler.addNewLine
 import gsonpath.compiler.addWithNewLine
-import gsonpath.extension.def.addException
+import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
-import gsonpath.extension.def.getAnnotationValue
+import gsonpath.extension.getAnnotationValue
 import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue

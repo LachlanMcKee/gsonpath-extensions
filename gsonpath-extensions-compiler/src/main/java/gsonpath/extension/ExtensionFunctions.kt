@@ -1,4 +1,4 @@
-package gsonpath.extension.def
+package gsonpath.extension
 
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock

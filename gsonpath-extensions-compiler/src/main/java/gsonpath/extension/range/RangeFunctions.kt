@@ -1,7 +1,7 @@
-package gsonpath.extension.def.range
+package gsonpath.extension.range
 
 import com.squareup.javapoet.CodeBlock
-import gsonpath.extension.def.addException
+import gsonpath.extension.addException
 
 /**
  * Creates the 'range' code validation code block.

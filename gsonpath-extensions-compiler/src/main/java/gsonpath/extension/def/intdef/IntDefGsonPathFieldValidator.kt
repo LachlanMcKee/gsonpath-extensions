@@ -4,10 +4,10 @@ import com.squareup.javapoet.CodeBlock
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.compiler.addNewLine
 import gsonpath.compiler.addWithNewLine
-import gsonpath.extension.def.addException
+import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
-import gsonpath.extension.def.getAnnotationValueObject
+import gsonpath.extension.getAnnotationValueObject
 import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue

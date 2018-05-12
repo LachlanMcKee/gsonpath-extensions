@@ -1,12 +1,12 @@
-package gsonpath.extension.def.size
+package gsonpath.extension.size
 
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.compiler.isFieldCollectionType
-import gsonpath.extension.def.addException
-import gsonpath.extension.def.getAnnotationMirror
-import gsonpath.extension.def.getAnnotationValueObject
+import gsonpath.extension.addException
+import gsonpath.extension.getAnnotationMirror
+import gsonpath.extension.getAnnotationValueObject
 import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror

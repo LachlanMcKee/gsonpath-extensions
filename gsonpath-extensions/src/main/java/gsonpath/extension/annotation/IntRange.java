@@ -4,9 +4,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Retention(SOURCE)
+@Retention(RUNTIME)
 @Target({METHOD, PARAMETER, FIELD, LOCAL_VARIABLE, ANNOTATION_TYPE})
 public @interface IntRange {
     /**
