@@ -2,7 +2,7 @@ package gsonpath.extension.range.floatrange;
 
 import gsonpath.AutoGsonAdapter;
 
-interface FloatRangeModel {
+public interface FloatRangeModel {
 
     interface BaseModel<T> {
         T getValue();

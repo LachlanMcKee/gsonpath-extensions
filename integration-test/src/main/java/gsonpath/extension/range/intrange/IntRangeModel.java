@@ -2,7 +2,7 @@ package gsonpath.extension.range.intrange;
 
 import gsonpath.AutoGsonAdapter;
 
-interface IntRangeModel {
+public interface IntRangeModel {
 
     interface BaseModel<T> {
         T getValue();
