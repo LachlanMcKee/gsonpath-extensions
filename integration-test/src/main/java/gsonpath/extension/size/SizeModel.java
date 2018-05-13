@@ -4,7 +4,7 @@ import gsonpath.AutoGsonAdapter;
 
 import java.util.List;
 
-interface SizeModel {
+public interface SizeModel {
 
     interface BaseModel<T> {
         T getValue();
