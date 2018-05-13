@@ -1,5 +1,6 @@
 package gsonpath.extension.size
 
+import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.GsonPathExtension
@@ -29,16 +30,22 @@ class SizeGsonPathFieldValidator : GsonPathExtension {
                 ?: getAnnotationMirror(fieldInfo.element, "gsonpath.extension.annotation", "Size")
                 ?: return null
 
-        // Ensure that the field is either an array or a collection.
+        // Ensure that the field is either an array, string or a collection.
+        val fieldCollectionType: Boolean =
+            try {
+                isFieldCollectionType(processingEnv, fieldInfo.typeMirror)
+            } catch (e: Exception) {
+                false
+            }
         val fieldType: FieldType =
             when {
                 (fieldInfo.typeMirror is ArrayType) -> FieldType.ARRAY
-
-                isFieldCollectionType(processingEnv, fieldInfo.typeMirror) -> FieldType.COLLECTION
+                fieldCollectionType -> FieldType.COLLECTION
+                (fieldInfo.typeName == ClassName.get(String::class.java)) -> FieldType.STRING
 
                 else ->
                     throw ProcessingException("Unexpected type found for field annotated with 'Size', only " +
-                        "an array, or a collection class may be used.", fieldInfo.element)
+                        "arrays, string, or collection classes may be used.", fieldInfo.element)
             }
 
         val fieldName = fieldInfo.fieldName
@@ -178,6 +185,7 @@ class SizeGsonPathFieldValidator : GsonPathExtension {
      */
     enum class FieldType(val label: String, val lengthProperty: String) {
         ARRAY("array", "length"),
-        COLLECTION("collection", "size()");
+        COLLECTION("collection", "size()"),
+        STRING("string", "length()");
     }
 }
