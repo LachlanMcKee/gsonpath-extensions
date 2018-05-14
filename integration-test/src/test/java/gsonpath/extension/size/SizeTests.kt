@@ -1,15 +1,14 @@
 package gsonpath.extension.size
 
 import gsonpath.extension.TestUtil
+import gsonpath.extension.TestUtil.executeFromJson
 import org.junit.Assert
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-
-import java.util.Arrays
-
-import gsonpath.extension.TestUtil.executeFromJson
+import java.lang.IllegalArgumentException
+import java.util.*
 
 @RunWith(Enclosed::class)
 object SizeTests {
@@ -23,38 +22,52 @@ object SizeTests {
         }
 
         @Test
-        fun givenArrayLengthWithinRange_whenJsonParsed_thenArrayIsDeserialized() {
-            val model = executeFromJson(modelClass, "{value: [1, 2]}")
-            assertValue(model, arrayOf(1, 2))
+        fun givenLengthWithinRange_whenJsonParsed_thenValueIsDeserialized() {
+            when (modelClass) {
+                SizeModel.MinAndMax.StringModel::class.java -> {
+                    val model = executeFromJson(modelClass, "{value: \"12\"}")
+                    Assert.assertEquals("12", model.value)
+                }
+                else -> {
+                    val model = executeFromJson(modelClass, "{value: [1, 2]}")
+                    assertValue(model, arrayOf(1, 2))
+                }
+            }
         }
 
         @Test
-        fun givenArraySizeTooSmall_whenJsonParsed_thenThrowsException() {
-            val expectedMessage = if (modelClass == SizeModel.MinAndMax.ArrayModel::class.java) {
-                "Invalid array length for field 'value'. Expected minimum: '1', actual minimum: '0'"
-            } else {
-                "Invalid collection size() for field 'value'. Expected minimum: '1', actual minimum: '0'"
-            }
+        fun givenSizeTooSmall_whenJsonParsed_thenThrowsException() {
+            val jsonString =
+                when (modelClass) {
+                    SizeModel.MinAndMax.StringModel::class.java -> "{value: \"\"}"
+                    else -> "{value: []}"
+                }
 
-            TestUtil.expectException(modelClass, "{value: []}", expectedMessage)
+            TestUtil.expectException(modelClass, jsonString,
+                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected minimum: '1', actual minimum: '0'")
         }
 
         @Test
-        fun givenArraySizeTooLarge_whenJsonParsed_thenThrowsException() {
-            val expectedMessage = if (modelClass == SizeModel.MinAndMax.ArrayModel::class.java) {
-                "Invalid array length for field 'value'. Expected maximum: '3', actual maximum: '4'"
-            } else {
-                "Invalid collection size() for field 'value'. Expected maximum: '3', actual maximum: '4'"
-            }
+        fun givenSizeTooLarge_whenJsonParsed_thenThrowsException() {
+            val jsonString =
+                when (modelClass) {
+                    SizeModel.MinAndMax.StringModel::class.java -> "{value: \"1234\"}"
+                    else -> "{value: [1, 2, 3, 4]}"
+                }
 
-            TestUtil.expectException(modelClass, "{value: [1, 2, 3, 4]}", expectedMessage)
+            TestUtil.expectException(modelClass, jsonString,
+                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected maximum: '3', actual maximum: '4'")
         }
 
         companion object {
             @JvmStatic
             @Parameterized.Parameters
             fun data(): Collection<Array<Any>> {
-                return Arrays.asList(arrayOf<Any>(SizeModel.MinAndMax.ArrayModel::class.java), arrayOf<Any>(SizeModel.MinAndMax.CollectionModel::class.java))
+                return Arrays.asList(
+                    arrayOf<Any>(SizeModel.MinAndMax.ArrayModel::class.java),
+                    arrayOf<Any>(SizeModel.MinAndMax.CollectionModel::class.java),
+                    arrayOf<Any>(SizeModel.MinAndMax.StringModel::class.java)
+                )
             }
         }
     }
@@ -69,33 +82,54 @@ object SizeTests {
         }
 
         @Test
-        fun givenArraySizeEqualsMultiple_whenJsonParsed_thenArrayIsDeserialized() {
-            val model = executeFromJson(modelClass, "{value: [1, 2]}")
-            assertValue(model, arrayOf(1, 2))
-        }
-
-        @Test
-        fun givenArraySizeIsAMultiple_whenJsonParsed_thenArrayIsDeserialized() {
-            val model = executeFromJson(modelClass, "{value: [1, 2, 3, 4]}")
-            assertValue(model, arrayOf(1, 2, 3, 4))
-        }
-
-        @Test
-        fun givenArraySizeIsNotAMultiple_whenJsonParsed_thenThrowsException() {
-            val expectedMessage = if (modelClass == SizeModel.Multiple.ArrayModel::class.java) {
-                "Invalid array length for field 'value'. length of '3' is not a multiple of 2"
-            } else {
-                "Invalid collection size() for field 'value'. size() of '3' is not a multiple of 2"
+        fun givenSizeEqualsMultiple_whenJsonParsed_thenValueIsDeserialized() {
+            when (modelClass) {
+                SizeModel.Multiple.StringModel::class.java -> {
+                    val model = executeFromJson(modelClass, "{value: \"12\"}")
+                    Assert.assertEquals("12", model.value)
+                }
+                else -> {
+                    val model = executeFromJson(modelClass, "{value: [1, 2]}")
+                    assertValue(model, arrayOf(1, 2))
+                }
             }
+        }
 
-            TestUtil.expectException(modelClass, "{value: [1, 2, 3]}", expectedMessage)
+        @Test
+        fun givenSizeIsAMultiple_whenJsonParsed_thenValueIsDeserialized() {
+            when (modelClass) {
+                SizeModel.Multiple.StringModel::class.java -> {
+                    val model = executeFromJson(modelClass, "{value: \"1234\"}")
+                    Assert.assertEquals("1234", model.value)
+                }
+                else -> {
+                    val model = executeFromJson(modelClass, "{value: [1, 2, 3, 4]}")
+                    assertValue(model, arrayOf(1, 2, 3, 4))
+                }
+            }
+        }
+
+        @Test
+        fun givenSizeIsNotAMultiple_whenJsonParsed_thenThrowsException() {
+            val jsonString =
+                when (modelClass) {
+                    SizeModel.Multiple.StringModel::class.java -> "{value: \"123\"}"
+                    else -> "{value: [1, 2, 3]}"
+                }
+
+            TestUtil.expectException(modelClass, jsonString,
+                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. ${modelClass.getLengthProperty()} of '3' is not a multiple of 2")
         }
 
         companion object {
             @JvmStatic
             @Parameterized.Parameters
             fun data(): Collection<Array<Any>> {
-                return Arrays.asList(arrayOf<Any>(SizeModel.Multiple.ArrayModel::class.java), arrayOf<Any>(SizeModel.Multiple.CollectionModel::class.java))
+                return Arrays.asList(
+                    arrayOf<Any>(SizeModel.Multiple.ArrayModel::class.java),
+                    arrayOf<Any>(SizeModel.Multiple.CollectionModel::class.java),
+                    arrayOf<Any>(SizeModel.Multiple.StringModel::class.java)
+                )
             }
         }
     }
@@ -110,27 +144,40 @@ object SizeTests {
         }
 
         @Test
-        fun givenArraySizeIsExact_whenJsonParsed_thenArrayIsDeserialized() {
-            val model = executeFromJson(modelClass, "{value: [1]}")
-            assertValue(model, arrayOf(1))
+        fun givenSizeIsExact_whenJsonParsed_thenValueIsDeserialized() {
+            when (modelClass) {
+                SizeModel.ExactSize.StringModel::class.java -> {
+                    val model = executeFromJson(modelClass, "{value: \"1\"}")
+                    Assert.assertEquals("1", model.value)
+                }
+                else -> {
+                    val model = executeFromJson(modelClass, "{value: [1]}")
+                    assertValue(model, arrayOf(1))
+                }
+            }
         }
 
         @Test
-        fun givenArraySizeDoesNotMatch_whenJsonParsed_thenThrowsException() {
-            val expectedMessage = if (modelClass == SizeModel.ExactSize.ArrayModel::class.java) {
-                "Invalid array length for field 'value'. Expected length: '1', actual length: '2'"
-            } else {
-                "Invalid collection size() for field 'value'. Expected size(): '1', actual size(): '2'"
-            }
+        fun givenSizeDoesNotMatch_whenJsonParsed_thenThrowsException() {
+            val jsonString =
+                when (modelClass) {
+                    SizeModel.ExactSize.StringModel::class.java -> "{value: \"12\"}"
+                    else -> "{value: [1, 2]}"
+                }
 
-            TestUtil.expectException(modelClass, "{value: [1, 2]}", expectedMessage)
+            TestUtil.expectException(modelClass, jsonString,
+                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected ${modelClass.getLengthProperty()}: '1', actual ${modelClass.getLengthProperty()}: '2'")
         }
 
         companion object {
             @JvmStatic
             @Parameterized.Parameters
             fun data(): Collection<Array<Any>> {
-                return Arrays.asList(arrayOf<Any>(SizeModel.ExactSize.ArrayModel::class.java), arrayOf<Any>(SizeModel.ExactSize.CollectionModel::class.java))
+                return Arrays.asList(
+                    arrayOf<Any>(SizeModel.ExactSize.ArrayModel::class.java),
+                    arrayOf<Any>(SizeModel.ExactSize.CollectionModel::class.java),
+                    arrayOf<Any>(SizeModel.ExactSize.StringModel::class.java)
+                )
             }
         }
     }
@@ -140,6 +187,24 @@ object SizeTests {
             Assert.assertTrue(Arrays.equals(array, model.value))
         } else {
             Assert.assertTrue(Arrays.asList(*array) == (model as SizeModel.BaseCollectionModel).value)
+        }
+    }
+
+    private fun Class<out SizeModel.BaseModel<*>>.getErrorPrefix(): String {
+        return when {
+            SizeModel.BaseArrayModel::class.java.isAssignableFrom(this) -> "array ${getLengthProperty()}"
+            SizeModel.BaseCollectionModel::class.java.isAssignableFrom(this) -> "collection ${getLengthProperty()}"
+            SizeModel.BaseStringModel::class.java.isAssignableFrom(this) -> "string ${getLengthProperty()}"
+            else -> throw IllegalArgumentException("Invalid size model")
+        }
+    }
+
+    private fun Class<out SizeModel.BaseModel<*>>.getLengthProperty(): String {
+        return when {
+            SizeModel.BaseArrayModel::class.java.isAssignableFrom(this) -> "length"
+            SizeModel.BaseCollectionModel::class.java.isAssignableFrom(this) -> "size()"
+            SizeModel.BaseStringModel::class.java.isAssignableFrom(this) -> "length()"
+            else -> throw IllegalArgumentException("Invalid size model")
         }
     }
 }
