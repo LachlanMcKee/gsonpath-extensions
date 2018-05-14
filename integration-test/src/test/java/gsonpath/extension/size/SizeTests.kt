@@ -44,7 +44,7 @@ object SizeTests {
                 }
 
             TestUtil.expectException(modelClass, jsonString,
-                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected minimum: '1', actual minimum: '0'")
+                "Invalid ${modelClass.getErrorPrefix()} for JSON element 'value'. Expected minimum: '1', actual minimum: '0'")
         }
 
         @Test
@@ -56,7 +56,7 @@ object SizeTests {
                 }
 
             TestUtil.expectException(modelClass, jsonString,
-                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected maximum: '3', actual maximum: '4'")
+                "Invalid ${modelClass.getErrorPrefix()} for JSON element 'value'. Expected maximum: '3', actual maximum: '4'")
         }
 
         companion object {
@@ -118,7 +118,7 @@ object SizeTests {
                 }
 
             TestUtil.expectException(modelClass, jsonString,
-                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. ${modelClass.getLengthProperty()} of '3' is not a multiple of 2")
+                "Invalid ${modelClass.getErrorPrefix()} for JSON element 'value'. ${modelClass.getLengthProperty()} of '3' is not a multiple of 2")
         }
 
         companion object {
@@ -166,7 +166,7 @@ object SizeTests {
                 }
 
             TestUtil.expectException(modelClass, jsonString,
-                "Invalid ${modelClass.getErrorPrefix()} for field 'value'. Expected ${modelClass.getLengthProperty()}: '1', actual ${modelClass.getLengthProperty()}: '2'")
+                "Invalid ${modelClass.getErrorPrefix()} for JSON element 'value'. Expected ${modelClass.getLengthProperty()}: '1', actual ${modelClass.getLengthProperty()}: '2'")
         }
 
         companion object {

@@ -20,7 +20,7 @@ buildscript {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'net.lachlanmckee:gsonpath-compiler-base:1.1.1'
+    compile "net.lachlanmckee:gsonpath-compiler-base:$gsonpath_compiler_version"
     compile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 
     testCompile "junit:junit:$junit_version"

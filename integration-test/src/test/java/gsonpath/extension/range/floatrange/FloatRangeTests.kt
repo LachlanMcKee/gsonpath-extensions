@@ -38,13 +38,13 @@ object FloatRangeTests {
         @Test
         fun givenBelowMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:-0.1}",
-                "Invalid 'from' range for value. Expected: '>= 0.0', Found '-0.1'")
+                "Invalid 'from' range for JSON element 'value'. Expected: '>= 0.0', Found '-0.1'")
         }
 
         @Test
         fun givenAboveMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.1}",
-                "Invalid 'to' range for value. Expected: '<= 5.0', Found '5.1'")
+                "Invalid 'to' range for JSON element 'value'. Expected: '<= 5.0', Found '5.1'")
         }
 
         companion object {
@@ -80,25 +80,25 @@ object FloatRangeTests {
         @Test
         fun givenMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:0.0}",
-                "Invalid 'from' range for value. Expected: '> 0.0', Found '0.0'")
+                "Invalid 'from' range for JSON element 'value'. Expected: '> 0.0', Found '0.0'")
         }
 
         @Test
         fun givenMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.0}",
-                "Invalid 'to' range for value. Expected: '< 5.0', Found '5.0'")
+                "Invalid 'to' range for JSON element 'value'. Expected: '< 5.0', Found '5.0'")
         }
 
         @Test
         fun givenBelowMinValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:-0.1}",
-                "Invalid 'from' range for value. Expected: '> 0.0', Found '-0.1'")
+                "Invalid 'from' range for JSON element 'value'. Expected: '> 0.0', Found '-0.1'")
         }
 
         @Test
         fun givenAboveMaxValue_whenJsonParsed_thenThrowsException() {
             TestUtil.expectException(modelClass, "{value:5.1}",
-                "Invalid 'to' range for value. Expected: '< 5.0', Found '5.1'")
+                "Invalid 'to' range for JSON element 'value'. Expected: '< 5.0', Found '5.1'")
         }
 
         companion object {

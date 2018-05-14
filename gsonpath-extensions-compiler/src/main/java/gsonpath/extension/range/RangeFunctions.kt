@@ -9,13 +9,13 @@ import gsonpath.extension.addException
  * @param value the value being inspected
  * @param isFrom whether this is a 'from' or a 'to' range inspection
  * @param isInclusive whether the range validation is inclusive of the value
- * @param fieldName the name of the field being validated
+ * @param jsonPath the json path of the field being validated
  * @param variableName the name of the variable that is assigned back to the fieldName
  */
 fun CodeBlock.Builder.handleRangeValue(value: String,
                                        isFrom: Boolean,
                                        isInclusive: Boolean,
-                                       fieldName: String,
+                                       jsonPath: String,
                                        variableName: String): CodeBlock.Builder {
 
     val comparisonOperator: String =
@@ -35,7 +35,7 @@ fun CodeBlock.Builder.handleRangeValue(value: String,
     val label: String = if (isFrom) "from" else "to"
 
     return this.beginControlFlow("if ($variableName $comparisonOperator $value)")
-        .addException("Invalid '$label' range for $fieldName. Expected: '$expectedOperator $value', " +
+        .addException("Invalid '$label' range for JSON element '$jsonPath'. Expected: '$expectedOperator $value', " +
             """Found '" + $variableName + "'""")
         .endControlFlow()
 }

@@ -3,11 +3,11 @@ package gsonpath.extension.range.intrange
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
+import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.extension.getAnnotationMirror
 import gsonpath.extension.getAnnotationValueObject
 import gsonpath.extension.range.handleRangeValue
-import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 
@@ -18,12 +18,14 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
     private val BOXED_INT = ClassName.get("java.lang", "Integer")
     private val BOXED_LONG = ClassName.get("java.lang", "Long")
 
-    override fun getExtensionName(): String {
-        return "'IntRange' Annotation"
-    }
+    override val extensionName: String
+        get() = "'IntRange' Annotation"
 
-    override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                          variableName: String): CodeBlock? {
+
+    override fun createFieldReadCodeBlock(processingEnvironment: ProcessingEnvironment,
+                                          extensionFieldMetadata: ExtensionFieldMetadata): CodeBlock? {
+
+        val (fieldInfo, variableName, jsonPath) = extensionFieldMetadata
 
         val intRangeAnnotation: AnnotationMirror =
             getAnnotationMirror(fieldInfo.element, "android.support.annotation", "IntRange")
@@ -43,10 +45,9 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
                 "integers and longs are allowed.", fieldInfo.element)
         }
 
-        val fieldName = fieldInfo.fieldName
         val validationBuilder = CodeBlock.builder()
-            .handleFrom(intRangeAnnotation, fieldName, variableName)
-            .handleTo(intRangeAnnotation, fieldName, variableName)
+            .handleFrom(intRangeAnnotation, jsonPath, variableName)
+            .handleTo(intRangeAnnotation, jsonPath, variableName)
 
         val validationCodeBlock = validationBuilder.build()
         if (!validationCodeBlock.isEmpty) {
@@ -59,10 +60,10 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
      * Adds the range 'from' validation if the fromValue does not equal the floor-value.
      *
      * @param intRangeAnnotationMirror the annotation to obtain the range values
-     * @param fieldName the name of the field being validated
+     * @param jsonPath the json path of the field being validated
      * @param variableName the name of the variable that is assigned back to the fieldName
      */
-    private fun CodeBlock.Builder.handleFrom(intRangeAnnotationMirror: AnnotationMirror, fieldName: String,
+    private fun CodeBlock.Builder.handleFrom(intRangeAnnotationMirror: AnnotationMirror, jsonPath: String,
                                              variableName: String): CodeBlock.Builder {
 
         val fromValue: Long = getAnnotationValueObject(intRangeAnnotationMirror, "from") as Long? ?: return this
@@ -71,17 +72,17 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
             return this
         }
 
-        return handleRangeValue(fromValue.toString(), true, true, fieldName, variableName)
+        return handleRangeValue(fromValue.toString(), true, true, jsonPath, variableName)
     }
 
     /**
      * Adds the range 'to' validation if the toValue does not equal the ceiling-value.
      *
      * @param intRangeAnnotationMirror the annotation to obtain the range values
-     * @param fieldName the name of the field being validated
+     * @param jsonPath the json path of the field being validated
      * @param variableName the name of the variable that is assigned back to the fieldName
      */
-    private fun CodeBlock.Builder.handleTo(intRangeAnnotationMirror: AnnotationMirror, fieldName: String,
+    private fun CodeBlock.Builder.handleTo(intRangeAnnotationMirror: AnnotationMirror, jsonPath: String,
                                            variableName: String): CodeBlock.Builder {
 
         val toValue: Long = getAnnotationValueObject(intRangeAnnotationMirror, "to") as Long? ?: return this
@@ -90,6 +91,6 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
             return this
         }
 
-        return handleRangeValue(toValue.toString(), false, true, fieldName, variableName)
+        return handleRangeValue(toValue.toString(), false, true, jsonPath, variableName)
     }
 }

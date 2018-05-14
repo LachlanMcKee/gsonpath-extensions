@@ -3,11 +3,11 @@ package gsonpath.extension.range.floatrange
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
+import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.extension.getAnnotationMirror
 import gsonpath.extension.getAnnotationValueObject
 import gsonpath.extension.range.handleRangeValue
-import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 
@@ -18,12 +18,14 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
     private val BOXED_FLOAT = ClassName.get("java.lang", "Float")
     private val BOXED_DOUBLE = ClassName.get("java.lang", "Double")
 
-    override fun getExtensionName(): String {
-        return "'FloatRange' Annotation"
-    }
+    override val extensionName: String
+        get() = "'FloatRange' Annotation"
 
-    override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                          variableName: String): CodeBlock? {
+
+    override fun createFieldReadCodeBlock(processingEnvironment: ProcessingEnvironment,
+                                          extensionFieldMetadata: ExtensionFieldMetadata): CodeBlock? {
+
+        val (fieldInfo, variableName, jsonPath) = extensionFieldMetadata
 
         val floatRangeAnnotation: AnnotationMirror =
             getAnnotationMirror(fieldInfo.element, "android.support.annotation", "FloatRange")
@@ -43,10 +45,9 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
                 "floats and doubles are allowed.", fieldInfo.element)
         }
 
-        val fieldName = fieldInfo.fieldName
         val validationBuilder = CodeBlock.builder()
-            .handleFrom(floatRangeAnnotation, fieldName, variableName)
-            .handleTo(floatRangeAnnotation, fieldName, variableName)
+            .handleFrom(floatRangeAnnotation, jsonPath, variableName)
+            .handleTo(floatRangeAnnotation, jsonPath, variableName)
 
         val validationCodeBlock = validationBuilder.build()
         if (!validationCodeBlock.isEmpty) {
@@ -59,10 +60,10 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
      * Adds the range 'from' validation if the fromValue does not equal the floor-value.
      *
      * @param floatRangeAnnotationMirror the annotation to obtain the range values
-     * @param fieldName the name of the field being validated
+     * @param jsonPath the json path of the field being validated
      * @param variableName the name of the variable that is assigned back to the fieldName
      */
-    private fun CodeBlock.Builder.handleFrom(floatRangeAnnotationMirror: AnnotationMirror, fieldName: String,
+    private fun CodeBlock.Builder.handleFrom(floatRangeAnnotationMirror: AnnotationMirror, jsonPath: String,
                                              variableName: String): CodeBlock.Builder {
 
         val fromValue: Double = getAnnotationValueObject(floatRangeAnnotationMirror, "from") as Double? ?: return this
@@ -73,17 +74,17 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
             return this
         }
 
-        return handleRangeValue(fromValue.toString(), true, fromInclusive, fieldName, variableName)
+        return handleRangeValue(fromValue.toString(), true, fromInclusive, jsonPath, variableName)
     }
 
     /**
      * Adds the range 'to' validation if the toValue does not equal the ceiling-value.
      *
      * @param floatRangeAnnotationMirror the annotation to obtain the range values
-     * @param fieldName the name of the field being validated
+     * @param jsonPath the json path of the field being validated
      * @param variableName the name of the variable that is assigned back to the fieldName
      */
-    private fun CodeBlock.Builder.handleTo(floatRangeAnnotationMirror: AnnotationMirror, fieldName: String,
+    private fun CodeBlock.Builder.handleTo(floatRangeAnnotationMirror: AnnotationMirror, jsonPath: String,
                                            variableName: String): CodeBlock.Builder {
 
         val toValue: Double = getAnnotationValueObject(floatRangeAnnotationMirror, "to") as Double? ?: return this
@@ -94,6 +95,6 @@ class FloatRangeGsonPathFieldValidator : GsonPathExtension {
             return this
         }
 
-        return handleRangeValue(toValue.toString(), false, toInclusive, fieldName, variableName)
+        return handleRangeValue(toValue.toString(), false, toInclusive, jsonPath, variableName)
     }
 }
