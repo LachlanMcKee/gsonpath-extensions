@@ -10,6 +10,7 @@ import gsonpath.extension.addException
 import gsonpath.extension.annotation.EmptyToNull
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.type.ArrayType
+import javax.lang.model.type.TypeMirror
 
 /**
  * A {@link GsonPathExtension} that supports the '@Size' annotation.
@@ -34,11 +35,18 @@ class EmptyToNullGsonPathFieldValidator : GsonPathExtension {
             } catch (e: Exception) {
                 false
             }
+        val fieldMapType: Boolean =
+            try {
+                isFieldMapType(processingEnvironment, fieldInfo.typeMirror)
+            } catch (e: Exception) {
+                false
+            }
 
         val fieldType: FieldType =
             when {
                 (fieldInfo.typeMirror is ArrayType) -> FieldType.ARRAY
                 fieldCollectionType -> FieldType.COLLECTION
+                fieldMapType -> FieldType.MAP
                 (fieldInfo.typeName == ClassName.get(String::class.java)) -> FieldType.STRING
 
                 else ->
@@ -58,6 +66,16 @@ class EmptyToNullGsonPathFieldValidator : GsonPathExtension {
             .endControlFlow()
 
         return validationBuilder.build()
+    }
+
+    private fun isFieldMapType(processingEnv: ProcessingEnvironment, typeMirror: TypeMirror): Boolean {
+        val mapTypeElement = processingEnv.elementUtils.getTypeElement(Map::class.java.name)
+        val typeUtils = processingEnv.typeUtils
+        val mapWildcardType = typeUtils.getDeclaredType(mapTypeElement,
+            typeUtils.getWildcardType(null, null),
+            typeUtils.getWildcardType(null, null))
+
+        return typeUtils.isSubtype(typeMirror, mapWildcardType)
     }
 
     /**
