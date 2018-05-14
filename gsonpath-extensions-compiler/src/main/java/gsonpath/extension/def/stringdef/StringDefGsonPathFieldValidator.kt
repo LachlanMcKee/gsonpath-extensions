@@ -8,6 +8,7 @@ import com.sun.source.tree.MemberSelectTree
 import com.sun.source.util.TreePathScanner
 import com.sun.source.util.Trees
 import com.sun.tools.javac.tree.JCTree
+import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.compiler.addNewLine
 import gsonpath.compiler.addWithNewLine
@@ -15,7 +16,6 @@ import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValue
-import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -30,12 +30,13 @@ import javax.lang.model.element.AnnotationValue
  */
 class StringDefGsonPathFieldValidator : GsonPathExtension {
 
-    override fun getExtensionName(): String {
-        return "'String Def' Annotation"
-    }
+    override val extensionName: String
+        get() = "'String Def' Annotation"
 
-    override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                          variableName: String): CodeBlock? {
+    override fun createFieldReadCodeBlock(processingEnvironment: ProcessingEnvironment,
+                                          extensionFieldMetadata: ExtensionFieldMetadata): CodeBlock? {
+
+        val (fieldInfo, variableName) = extensionFieldMetadata
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
             "android.support.annotation", "StringDef") ?: return null
@@ -50,7 +51,7 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         // the actual source code and obtain the variable names.
         //
         val annotationElement = defAnnotationMirrors.annotationMirror.annotationType.asElement()
-        val treesInstance = Trees.instance(processingEnv)
+        val treesInstance = Trees.instance(processingEnvironment)
         val stringDefConstants: List<String>? = AnnotationValueConstantsVisitor().scan(
             treesInstance.getPath(annotationElement, defAnnotationMirrors.defAnnotationMirror, defAnnotationValues),
             null)
@@ -89,7 +90,7 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         // Throw an exception if an unexpected String is found.
         validationBuilder.addWithNewLine("default:")
             .indent()
-            .addException("""Unexpected String '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
+            .addException("""Unexpected String '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
             .unindent()
 
         validationBuilder.endControlFlow()

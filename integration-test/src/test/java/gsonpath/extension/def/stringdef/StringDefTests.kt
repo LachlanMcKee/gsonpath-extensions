@@ -26,7 +26,7 @@ class StringDefTests {
 
     @Test
     fun givenInvalidValue_whenJsonParsed_thenThrowsException() {
-        TestUtil.expectException(StringDefModel::class.java, "{\"value\": \"3\"}", "Unexpected String '3' for field 'value'")
+        TestUtil.expectException(StringDefModel::class.java, "{\"value\": \"3\"}", "Unexpected String '3' for JSON element 'value'")
     }
 }
 

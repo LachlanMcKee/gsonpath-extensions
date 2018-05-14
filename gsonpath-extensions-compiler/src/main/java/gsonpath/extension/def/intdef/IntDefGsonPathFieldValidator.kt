@@ -1,6 +1,7 @@
 package gsonpath.extension.def.intdef
 
 import com.squareup.javapoet.CodeBlock
+import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
 import gsonpath.compiler.addNewLine
 import gsonpath.compiler.addWithNewLine
@@ -8,7 +9,6 @@ import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValueObject
-import gsonpath.model.FieldInfo
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -16,13 +16,13 @@ import javax.lang.model.element.AnnotationValue
  * A {@link GsonPathExtension} that supports the '@IntDef' annotation.
  */
 class IntDefGsonPathFieldValidator : GsonPathExtension {
+    override val extensionName: String
+        get() = "'Int Def' Annotation"
 
-    override fun getExtensionName(): String {
-        return "'Int Def' Annotation"
-    }
+    override fun createFieldReadCodeBlock(processingEnvironment: ProcessingEnvironment,
+                                          extensionFieldMetadata: ExtensionFieldMetadata): CodeBlock? {
 
-    override fun createFieldReadCodeBlock(processingEnv: ProcessingEnvironment, fieldInfo: FieldInfo,
-                                          variableName: String): CodeBlock? {
+        val (fieldInfo, variableName) = extensionFieldMetadata
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
             "android.support.annotation", "IntDef") ?: return null
@@ -47,7 +47,7 @@ class IntDefGsonPathFieldValidator : GsonPathExtension {
             // Create a 'default' that throws an exception if an unexpected integer is found.
             .addWithNewLine("default:")
             .indent()
-            .addException("""Unexpected Int '" + $variableName + "' for field '${fieldInfo.fieldName}'""")
+            .addException("""Unexpected Int '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
             .unindent()
 
         validationBuilder.endControlFlow()

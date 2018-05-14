@@ -24,6 +24,6 @@ class IntDefTests {
 
     @Test
     fun givenInvalidValue_whenJsonParsed_thenThrowsException() {
-        TestUtil.expectException(IntDefModel::class.java, "{\"value\": 3}", "Unexpected Int '3' for field 'value'")
+        TestUtil.expectException(IntDefModel::class.java, "{\"value\": 3}", "Unexpected Int '3' for JSON element 'value'")
     }
 }
