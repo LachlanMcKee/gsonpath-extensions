@@ -1,13 +1,13 @@
 package gsonpath.extension.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
-@Target({PARAMETER, LOCAL_VARIABLE, METHOD, FIELD, ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Size {
     /**
      * An exact size (or -1 if not specified)
