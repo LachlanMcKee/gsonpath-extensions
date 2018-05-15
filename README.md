@@ -2,6 +2,8 @@
 
 An extension library for Gson Path that adds validation that does not exist in the core Gson Path library. The library supports [Android Support Library](https://developer.android.com/reference/android/support/annotation/package-summary.html) annotations (without including the dependency), but also includes the `FloatRange`, `IntRange` and `Size` for non-Android projects.
 * This library currently supports validation for `@FloatRange`, `@IntRange`, `@StringDef` and `@IntDef`.
+* The `@EmptyToNull` annotation bundled in the library will convert empty strings, arrays, collections or maps to null.
+   * If the value marked with `@EmptyToNull` is also marked with a `@NonNull` (or similar) annotation, it will throw an exception.
 
 ## FloatRange example
 The following is an example of `@FloatRange` annotation validation.
@@ -160,6 +162,73 @@ if (value_value != null) {
         default:
             throw new com.google.gson.JsonParseException("Unexpected String '" + value_value + "' for field 'value'");
     }
+}
+```
+
+
+## EmptyToNull example
+The following is an example of `@EmptyToNull` annotation validation.
+
+### Model
+```java
+@AutoGsonAdapter
+interface StringDefModel {
+    @EmptyToNull
+    String getNullableString();
+    
+    @EmptyToNull
+    String[] getNullableArray();
+    
+    @EmptyToNull
+    Collection<String> getNullableCollection();
+    
+    @EmptyToNull
+    Map<String, String> getNullableMap();
+    
+    @NonNull
+    @EmptyToNull
+    String getNonNullString();
+    
+    @NonNull
+    @EmptyToNull
+    String[] getNonNullArray();
+    
+    @NonNull
+    @EmptyToNull
+    Collection<String> getNonNullCollection();
+    
+    @NonNull
+    @EmptyToNull
+    Map<String, String> getNonNullMap();
+}
+```
+
+### Generated validation (paraphrased)
+```java
+// Extension - 'EmptyToNull' Annotation
+if (nullableString.trim().length() == 0) {
+    nullableString = null;
+}
+if (nullableArray.length == 0) {
+    nullableArray = null;
+}
+if (nullableCollection.size() == 0) {
+    nullableCollection = null;
+}
+if (nullableMap.size() == 0) {
+    nullableMap = null;
+}
+if (nonNullString.trim().length() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullString' cannot be blank");
+}
+if (nonNullArray.length == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullArray' cannot be blank");
+}
+if (nonNullCollection.size() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullCollection' cannot be blank");
+}
+if (nonNullMap.size() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullMap' cannot be blank");
 }
 ```
 
