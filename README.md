@@ -1,7 +1,9 @@
-# Gson Path Extensions - Android
+# Gson Path Extensions
 
-An extension library for Gson Path that adds validation for fields annotated with [Android Support Library annotations](https://developer.android.com/reference/android/support/annotation/package-summary.html) annotations.
+An extension library for Gson Path that adds validation that does not exist in the core Gson Path library. The library supports [Android Support Library](https://developer.android.com/reference/android/support/annotation/package-summary.html) annotations (without including the dependency), but also includes the `FloatRange`, `IntRange` and `Size` for non-Android projects.
 * This library currently supports validation for `@FloatRange`, `@IntRange`, `@StringDef` and `@IntDef`.
+* The `@EmptyToNull` annotation bundled in the library will convert empty strings, arrays, collections or maps to null.
+   * If the value marked with `@EmptyToNull` is also marked with a `@NonNull` (or similar) annotation, it will throw an exception.
 
 ## FloatRange example
 The following is an example of `@FloatRange` annotation validation.
@@ -20,7 +22,7 @@ interface FloatModel extends BaseFloatModel {
 // Gsonpath Extensions
 if (value_value != null) {
 
-    // Extension - Android Support Library 'FloatRange' Annotation
+    // Extension - 'FloatRange' Annotation
     if (value_value <= 0.0) {
         throw new com.google.gson.JsonParseException("Invalid 'from' range for value. Expected: '> 0.0', Found '" + value_value + "'");
     }
@@ -46,7 +48,7 @@ interface IntModel extends BaseModel<Integer> {
 ```java
 // Gsonpath Extensions
 if (value_value != null) {
-    // Extension - Android Support Library 'IntRange' Annotation
+    // Extension - 'IntRange' Annotation
     if (value_value < 0) {
         throw new com.google.gson.JsonParseException("Invalid 'from' range for value. Expected: '>= 0', Found '" + value_value + "'");
     }
@@ -72,7 +74,7 @@ interface ArrayModel extends BaseArrayModel {
 ```java
 // Gsonpath Extensions
 if (value_value != null) {
-    // Extension - Android Support Library 'Size' Annotation
+    // Extension - 'Size' Annotation
     if (value_value.length != 2) {
         throw new com.google.gson.JsonParseException("Invalid array length for field 'value'. Expected length: '2', actual length: '" + value_value.length + "'");
     }
@@ -111,7 +113,7 @@ interface IntDefModel {
 ```java
 // Gsonpath Extensions
 if (value_value != null) {
-    // Extension - Android Support Library 'Int Def' Annotation
+    // Extension - 'Int Def' Annotation
     switch (value_value) {
         case 1:
         case 2:
@@ -147,7 +149,7 @@ interface StringDefModel {
 ```java
 // Gsonpath Extensions
 if (value_value != null) {
-    // Extension - Android Support Library 'String Def' Annotation
+    // Extension - 'String Def' Annotation
     switch (value_value) {
         case StringDefExample.VALUE_1:
             value_value = StringDefExample.VALUE_1;
@@ -163,9 +165,76 @@ if (value_value != null) {
 }
 ```
 
+
+## EmptyToNull example
+The following is an example of `@EmptyToNull` annotation validation.
+
+### Model
+```java
+@AutoGsonAdapter
+interface StringDefModel {
+    @EmptyToNull
+    String getNullableString();
+    
+    @EmptyToNull
+    String[] getNullableArray();
+    
+    @EmptyToNull
+    Collection<String> getNullableCollection();
+    
+    @EmptyToNull
+    Map<String, String> getNullableMap();
+    
+    @NonNull
+    @EmptyToNull
+    String getNonNullString();
+    
+    @NonNull
+    @EmptyToNull
+    String[] getNonNullArray();
+    
+    @NonNull
+    @EmptyToNull
+    Collection<String> getNonNullCollection();
+    
+    @NonNull
+    @EmptyToNull
+    Map<String, String> getNonNullMap();
+}
+```
+
+### Generated validation (paraphrased)
+```java
+// Extension - 'EmptyToNull' Annotation
+if (nullableString.trim().length() == 0) {
+    nullableString = null;
+}
+if (nullableArray.length == 0) {
+    nullableArray = null;
+}
+if (nullableCollection.size() == 0) {
+    nullableCollection = null;
+}
+if (nullableMap.size() == 0) {
+    nullableMap = null;
+}
+if (nonNullString.trim().length() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullString' cannot be blank");
+}
+if (nonNullArray.length == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullArray' cannot be blank");
+}
+if (nonNullCollection.size() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullCollection' cannot be blank");
+}
+if (nonNullMap.size() == 0) {
+    throw new com.google.gson.JsonParseException("JSON element 'nonNullMap' cannot be blank");
+}
+```
+
 ## Download
 This library is available on Maven, you can add it to your project using the following gradle dependencies:
 
 ```gradle
-apt 'net.lachlanmckee:gsonpath-extension-android:1.1.0'
+apt 'net.lachlanmckee:gsonpath-extensions:1.0.0'
 ```

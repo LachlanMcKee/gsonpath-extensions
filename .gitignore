@@ -7,12 +7,5 @@ classes/
 .idea/
 *.iml
 
-# Android Folders/Files
-build.xml
-local.properties
-signing.properties
-*.keystore
-.gradle/
-
 # Vim Temp files
 *~
