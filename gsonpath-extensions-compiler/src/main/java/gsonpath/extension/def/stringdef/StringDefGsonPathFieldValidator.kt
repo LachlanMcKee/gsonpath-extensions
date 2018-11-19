@@ -14,8 +14,7 @@ import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValue
-import gsonpath.util.addWithNewLine
-import gsonpath.util.newLine
+import gsonpath.util.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -39,11 +38,11 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         val (fieldInfo, variableName) = extensionFieldMetadata
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
-            "android.support.annotation", "StringDef") ?: return null
+                "android.support.annotation", "StringDef") ?: return null
 
         // The annotation values reference which contains the String constants.
         val defAnnotationValues: AnnotationValue = getAnnotationValue(defAnnotationMirrors.defAnnotationMirror,
-            "value") ?: return null
+                "value") ?: return null
 
         //
         // The standard javax AnnotationMirror does not expose the ability to retrieve the actual constant variable
@@ -53,53 +52,42 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
         val annotationElement = defAnnotationMirrors.annotationMirror.annotationType.asElement()
         val treesInstance = Trees.instance(processingEnvironment)
         val stringDefConstants: List<String>? = AnnotationValueConstantsVisitor().scan(
-            treesInstance.getPath(annotationElement, defAnnotationMirrors.defAnnotationMirror, defAnnotationValues),
-            null)
+                treesInstance.getPath(annotationElement, defAnnotationMirrors.defAnnotationMirror, defAnnotationValues),
+                null)
 
         // If there are no String constants in the 'StringDef' abort.
         if (stringDefConstants == null || stringDefConstants.isEmpty()) {
             return null
         }
 
-        val validationBuilder = CodeBlock.builder()
-        validationBuilder.beginControlFlow("switch ($variableName)")
+        return codeBlock {
+            switch(variableName) {
+                stringDefConstants
+                        .map {
+                            if (!it.contains(".")) {
+                                // Append the enclosing class name
+                                "$annotationElement.$it"
+                            } else {
+                                it
+                            }
+                        }
+                        .forEach {
+                            //
+                            // The StringDef annotation requires the String constant to be referenced, therefore we must
+                            // reassign the String value to the constant.
+                            //
+                            case(it) {
+                                assign(variableName, it)
+                            }
+                        }
 
-        stringDefConstants.forEach { it ->
-
-            val constant =
-                if (!it.contains(".")) {
-                    // Append the enclosing class name
-                    "$annotationElement.$it"
-                } else {
-                    it
-                }
-
-            validationBuilder.addWithNewLine("""case $constant:""")
-                .indent()
-
-                //
-                // The StringDef annotation requires the String constant to be referenced, therefore we must
-                // reassign the String value to the constant.
-                //
-                .addStatement("$variableName = $constant")
-                .addStatement("break")
-                .unindent()
-                .newLine()
+                // Throw an exception if an unexpected String is found.
+                addWithNewLine("default:")
+                indent()
+                addException("""Unexpected String '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
+                unindent()
+            }
         }
-
-        // Throw an exception if an unexpected String is found.
-        validationBuilder.addWithNewLine("default:")
-            .indent()
-            .addException("""Unexpected String '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
-            .unindent()
-
-        validationBuilder.endControlFlow()
-
-        val validationCodeBlock = validationBuilder.build()
-        if (!validationCodeBlock.isEmpty) {
-            return validationCodeBlock
-        }
-        return null
     }
 
     /**

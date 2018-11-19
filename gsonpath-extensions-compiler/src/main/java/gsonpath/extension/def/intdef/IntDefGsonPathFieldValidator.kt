@@ -8,7 +8,9 @@ import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValueObject
 import gsonpath.util.addWithNewLine
-import gsonpath.util.newLine
+import gsonpath.util.case
+import gsonpath.util.codeBlock
+import gsonpath.util.switch
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -25,38 +27,26 @@ class IntDefGsonPathFieldValidator : GsonPathExtension {
         val (fieldInfo, variableName) = extensionFieldMetadata
 
         val defAnnotationMirrors: DefAnnotationMirrors = getDefAnnotationMirrors(fieldInfo.element,
-            "android.support.annotation", "IntDef") ?: return null
-
-        val validationBuilder = CodeBlock.builder()
-        validationBuilder.beginControlFlow("switch ($variableName)")
+                "android.support.annotation", "IntDef") ?: return null
 
         // The integer constants within the 'IntDef#values' property.
         val intDefValues: List<*> = getAnnotationValueObject(defAnnotationMirrors.defAnnotationMirror, "value")
-            as List<*>? ?: return null
+                as List<*>? ?: return null
 
-        // Create a 'case' for each valid integer.
-        intDefValues.forEach { it ->
-            validationBuilder.addWithNewLine("""case ${(it as AnnotationValue).value}:""")
+        return codeBlock {
+            switch(variableName) {
+                // Create a 'case' for each valid integer.
+                intDefValues.forEach {
+                    case((it as AnnotationValue).value.toString()) {}
+                }
+
+                // Create a 'default' that throws an exception if an unexpected integer is found.
+                addWithNewLine("default:")
+                indent()
+                addException("""Unexpected Int '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
+                unindent()
+            }
         }
-
-        validationBuilder.indent()
-            .addStatement("break")
-            .unindent()
-            .newLine()
-
-            // Create a 'default' that throws an exception if an unexpected integer is found.
-            .addWithNewLine("default:")
-            .indent()
-            .addException("""Unexpected Int '" + $variableName + "' for JSON element '${extensionFieldMetadata.jsonPath}'""")
-            .unindent()
-
-        validationBuilder.endControlFlow()
-
-        val validationCodeBlock = validationBuilder.build()
-        if (!validationCodeBlock.isEmpty) {
-            return validationCodeBlock
-        }
-        return null
     }
 
 }
