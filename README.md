@@ -236,5 +236,5 @@ if (nonNullMap.size() == 0) {
 This library is available on Maven, you can add it to your project using the following gradle dependencies:
 
 ```gradle
-apt 'net.lachlanmckee:gsonpath-extensions:1.0.0'
+apt 'net.lachlanmckee:gsonpath-extensions:1.1.0'
 ```
