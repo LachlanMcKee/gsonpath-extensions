@@ -3,12 +3,12 @@ package gsonpath.extension.def.intdef
 import com.squareup.javapoet.CodeBlock
 import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.compiler.addNewLine
-import gsonpath.compiler.addWithNewLine
 import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValueObject
+import gsonpath.util.addWithNewLine
+import gsonpath.util.newLine
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -42,7 +42,7 @@ class IntDefGsonPathFieldValidator : GsonPathExtension {
         validationBuilder.indent()
             .addStatement("break")
             .unindent()
-            .addNewLine()
+            .newLine()
 
             // Create a 'default' that throws an exception if an unexpected integer is found.
             .addWithNewLine("default:")

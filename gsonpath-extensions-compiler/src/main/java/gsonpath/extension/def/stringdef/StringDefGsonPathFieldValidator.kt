@@ -10,12 +10,12 @@ import com.sun.source.util.Trees
 import com.sun.tools.javac.tree.JCTree
 import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.compiler.addNewLine
-import gsonpath.compiler.addWithNewLine
 import gsonpath.extension.addException
 import gsonpath.extension.def.DefAnnotationMirrors
 import gsonpath.extension.def.getDefAnnotationMirrors
 import gsonpath.extension.getAnnotationValue
+import gsonpath.util.addWithNewLine
+import gsonpath.util.newLine
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationValue
 
@@ -84,7 +84,7 @@ class StringDefGsonPathFieldValidator : GsonPathExtension {
                 .addStatement("$variableName = $constant")
                 .addStatement("break")
                 .unindent()
-                .addNewLine()
+                .newLine()
         }
 
         // Throw an exception if an unexpected String is found.

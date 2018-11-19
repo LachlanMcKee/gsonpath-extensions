@@ -5,10 +5,10 @@ import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.compiler.isFieldCollectionType
 import gsonpath.extension.addException
 import gsonpath.extension.getAnnotationMirror
 import gsonpath.extension.getAnnotationValueObject
+import gsonpath.util.ProcessorTypeHandler
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.ArrayType
@@ -34,7 +34,7 @@ class SizeGsonPathFieldValidator : GsonPathExtension {
         // Ensure that the field is either an array, string or a collection.
         val fieldCollectionType: Boolean =
             try {
-                isFieldCollectionType(processingEnvironment, fieldInfo.typeMirror)
+                ProcessorTypeHandler(processingEnvironment).isMirrorOfCollectionType(fieldInfo.typeMirror)
             } catch (e: Exception) {
                 false
             }
