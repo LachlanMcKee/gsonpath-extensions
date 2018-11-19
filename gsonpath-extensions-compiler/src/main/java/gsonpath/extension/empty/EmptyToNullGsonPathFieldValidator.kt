@@ -5,9 +5,12 @@ import com.squareup.javapoet.CodeBlock
 import gsonpath.ProcessingException
 import gsonpath.compiler.ExtensionFieldMetadata
 import gsonpath.compiler.GsonPathExtension
-import gsonpath.compiler.isFieldCollectionType
 import gsonpath.extension.addException
 import gsonpath.extension.annotation.EmptyToNull
+import gsonpath.util.ProcessorTypeHandler
+import gsonpath.util.`if`
+import gsonpath.util.assign
+import gsonpath.util.codeBlock
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.TypeMirror
@@ -30,50 +33,47 @@ class EmptyToNullGsonPathFieldValidator : GsonPathExtension {
         }
 
         val fieldCollectionType: Boolean =
-            try {
-                isFieldCollectionType(processingEnvironment, fieldInfo.typeMirror)
-            } catch (e: Exception) {
-                false
-            }
+                try {
+                    ProcessorTypeHandler(processingEnvironment).isMirrorOfCollectionType(fieldInfo.typeMirror)
+                } catch (e: Exception) {
+                    false
+                }
         val fieldMapType: Boolean =
-            try {
-                isFieldMapType(processingEnvironment, fieldInfo.typeMirror)
-            } catch (e: Exception) {
-                false
-            }
+                try {
+                    isFieldMapType(processingEnvironment, fieldInfo.typeMirror)
+                } catch (e: Exception) {
+                    false
+                }
 
         val fieldType: FieldType =
-            when {
-                (fieldInfo.typeMirror is ArrayType) -> FieldType.ARRAY
-                fieldCollectionType -> FieldType.COLLECTION
-                fieldMapType -> FieldType.MAP
-                (fieldInfo.typeName == ClassName.get(String::class.java)) -> FieldType.STRING
+                when {
+                    (fieldInfo.typeMirror is ArrayType) -> FieldType.ARRAY
+                    fieldCollectionType -> FieldType.COLLECTION
+                    fieldMapType -> FieldType.MAP
+                    (fieldInfo.typeName == ClassName.get(String::class.java)) -> FieldType.STRING
 
-                else ->
-                    throw ProcessingException("Unexpected type found for field annotated with 'EmptyToNull', only " +
-                        "string, array, map, or collection classes may be used.", fieldInfo.element)
-            }
+                    else ->
+                        throw ProcessingException("Unexpected type found for field annotated with 'EmptyToNull', only " +
+                                "string, array, map, or collection classes may be used.", fieldInfo.element)
+                }
 
-        val validationBuilder = CodeBlock.builder()
-            .beginControlFlow("if ($variableName${fieldType.emptyCheck})")
-            .apply {
+        return codeBlock {
+            `if`("$variableName${fieldType.emptyCheck}") {
                 if (isRequired) {
                     addException("JSON element '$jsonPath' cannot be blank")
                 } else {
-                    addStatement("$variableName = null")
+                    assign(variableName, "null")
                 }
             }
-            .endControlFlow()
-
-        return validationBuilder.build()
+        }
     }
 
     private fun isFieldMapType(processingEnv: ProcessingEnvironment, typeMirror: TypeMirror): Boolean {
         val mapTypeElement = processingEnv.elementUtils.getTypeElement(Map::class.java.name)
         val typeUtils = processingEnv.typeUtils
         val mapWildcardType = typeUtils.getDeclaredType(mapTypeElement,
-            typeUtils.getWildcardType(null, null),
-            typeUtils.getWildcardType(null, null))
+                typeUtils.getWildcardType(null, null),
+                typeUtils.getWildcardType(null, null))
 
         return typeUtils.isSubtype(typeMirror, mapWildcardType)
     }

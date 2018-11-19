@@ -8,6 +8,7 @@ import gsonpath.compiler.GsonPathExtension
 import gsonpath.extension.getAnnotationMirror
 import gsonpath.extension.getAnnotationValueObject
 import gsonpath.extension.range.handleRangeValue
+import gsonpath.util.codeBlock
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 
@@ -28,28 +29,27 @@ class IntRangeGsonPathFieldValidator : GsonPathExtension {
         val (fieldInfo, variableName, jsonPath) = extensionFieldMetadata
 
         val intRangeAnnotation: AnnotationMirror =
-            getAnnotationMirror(fieldInfo.element, "android.support.annotation", "IntRange")
-                ?: getAnnotationMirror(fieldInfo.element, "gsonpath.extension.annotation", "IntRange")
-                ?: return null
+                getAnnotationMirror(fieldInfo.element, "android.support.annotation", "IntRange")
+                        ?: getAnnotationMirror(fieldInfo.element, "gsonpath.extension.annotation", "IntRange")
+                        ?: return null
 
         // Ensure that the field is either a integer, or a long.
         val typeName =
-            if (fieldInfo.typeName.isPrimitive) {
-                fieldInfo.typeName.box()
-            } else {
-                fieldInfo.typeName
-            }
+                if (fieldInfo.typeName.isPrimitive) {
+                    fieldInfo.typeName.box()
+                } else {
+                    fieldInfo.typeName
+                }
 
         if (typeName != BOXED_INT && typeName != BOXED_LONG) {
             throw ProcessingException("Unexpected type found for field annotated with 'IntRange', only " +
-                "integers and longs are allowed.", fieldInfo.element)
+                    "integers and longs are allowed.", fieldInfo.element)
         }
 
-        val validationBuilder = CodeBlock.builder()
-            .handleFrom(intRangeAnnotation, jsonPath, variableName)
-            .handleTo(intRangeAnnotation, jsonPath, variableName)
-
-        val validationCodeBlock = validationBuilder.build()
+        val validationCodeBlock = codeBlock {
+            handleFrom(intRangeAnnotation, jsonPath, variableName)
+            handleTo(intRangeAnnotation, jsonPath, variableName)
+        }
         if (!validationCodeBlock.isEmpty) {
             return validationCodeBlock
         }

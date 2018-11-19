@@ -1,10 +1,10 @@
 Change Log
 ==========
 
-Version 1.1.0 *(2017-02-26)*
+Version 1.1.0 *(2018-11-19)*
 ----------------------------
 
-* Added support for Gsonpath 2.3.0.
+* Added support for Gsonpath 3.0.0
 
 Version 1.0.0 *(2017-02-26)*
 ----------------------------
